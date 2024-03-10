@@ -1,0 +1,24 @@
+<nav class="navigation">
+    <div class="container container-lg">
+        <div class="logo">
+            <a href="/">
+                <p>QuickJobs</p>
+            </a>
+        </div>
+
+        <div class="main-menu">
+            <ul>
+                <li><a href="/offers">Offers</a></li>
+                
+                <% if (!loggedIn) { %>
+                    <li><a href="/register">Become a QuickJobber</a></li>
+                    <li><a href="/login">Login</a></li>
+                <% } else if (loggedIn) { %>
+                    <li><a href="/seller-dashboard">Seller Dashboard</a></li>
+                <% } %>
+                        
+                <li><a href="/offers"><i class="fa-solid fa-magnifying-glass"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

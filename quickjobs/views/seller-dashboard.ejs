@@ -1,0 +1,287 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Seller Dashboard -->
+         <section class="seller-dashboard">
+            <div class="container container-lg">
+                <!-- Edit details -->
+                <div class="card bg-light edit-details">
+                    <form action="updated" method="POST" enctype="multipart/form-data">
+                        <!-- Personal Details -->
+                        <div class="personal-details">
+                            <h2 class="text-md">Your Personal Details</h2>
+                            <ul>
+                                <li><input type="text" id="name" name="name" placeholder="Your Name" value="<%= userData.name %>"></li>
+                                <li><textarea id="description" name="description" placeholder="Write a short introduction about yourself"><%= userData.description %></textarea></li>
+                                <li><textarea id="qualifications" name="qualifications" placeholder="List some of your experiences"><%= userData.qualifications %></textarea></li>
+                            </ul>
+                            <button type="submit" class="btn">Save</button>
+                        </div>
+
+                        <!-- Profile Picture, Social Media Accounts -->
+                        <div class="profile-picture">
+                            <!-- Profile Picture -->
+                            <h2 class="text-md">Your Profile Picture</h2>
+                            <div id="current-profile-picture">
+                                <img src="./uploads/<%= userData.image %>" alt="<%= userData.name %>'s Profile Picture">
+                            </div>
+                            <input type="file" name="image" id="image">
+    
+                            <!-- Social Media Accounts -->
+                            <h2 class="text-md">Your Social Media Accounts</h2>
+                            <ul>
+                                <li><input type="text" name="facebook" id="facebook" placeholder="Link to your Facebook Profile" value="<%= userData.facebook %>"></li>
+                                <li><input type="text" name="instagram" id="instagram" placeholder="Link to your Instagram Profile" value="<%= userData.instagram %>"></li>
+                                <li><input type="text" name="tiktok" id="tiktok" placeholder="Link to your TikTok Profile" value="<%= userData.tiktok %>"></li>
+                            </ul>
+                        </div>
+    
+                        <!-- Location -->
+                        <div class="location">
+                            <h2 class="text-md">Your Location</h2>
+                            <ul>
+                                <li><input type="text" id="lat" name="lat" placeholder="Latitude" value="<%= userData.location[0] %>"></li>
+                                <li><input type="text" id="lng" name="lng" placeholder="Longitude" value="<%= userData.location[1] %>"></li>
+                            </ul>
+                            <div id="mapid"></div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="seller-dashboard-grid">
+                    <!-- Offers received -->
+                    <div class="card bg-light">
+                        <h2 class="text-md">Offers Received</h2>
+                        <ul>
+                            <div class="offers-received">
+                                <div>
+                                    <% if (offers.length != 0) { %>
+                                        <% let hasReceivedOffers = false; %>
+
+                                        <% offers.forEach(function(offer){%>
+                                            <% offer.person_proposing.forEach(function(person){%>
+                                                <% if(offer.person_accepting == "None"){ %>
+                                                    <% hasReceivedOffers = true; %>
+                                                    <span>New Inquiry for <%= offer.title %></span>
+                                                    <p>Congratulations! <%= person %> would like to hire you. Click <a href="/chat">here</a> to discuss the details with them.</p>
+                                                    <form action="/accept_proposal" method = "POST">
+                                                        <input type="hidden" id="person" name="person" value="<%= person %>">
+                                                        <input type="hidden" id="offerid" name="offerid" value="<%= offer._id %>">
+                                                        <button>Accept</button>
+                                                    </form>
+                                                    <form action="/reject_proposal" method = "POST">
+                                                        <input type="hidden" id="person" name="person" value="<%= person %>">
+                                                        <input type="hidden" id="offerid" name="offerid" value="<%= offer._id %>">
+                                                        <button>Reject</button>
+                                                    </form>
+                                                <% } %>  
+                                            <%})%>
+                                        <%})%>
+
+                                        <% if (!hasReceivedOffers) { %>
+                                            You have no open proposals.
+                                        <% } %>
+
+                                    <% } else { %>
+                                        You have no open proposals.
+                                    <% } %>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                    
+                    <!-- Active Jobs -->
+                    <div class="card bg-light">
+                        <h2 class="text-md">Active Jobs</h2>
+                        <ul>
+                            <% if (offers.length != 0) { %>
+                                <% let hasActiveJobs = false; %>
+
+                                <% offers.forEach(function(offer){%>
+                                    <% if(offer.person_accepting != "None"){ %>
+                                        <% hasActiveJobs = true; %>
+                                        <li>
+                                            <div class="active-jobs">
+                                                <ul>
+                                                    <li><a href="/offer-page?keyword=<%= offer._id %>"><%= offer.title %></a></li>
+                                                    <% if(offer.person_accepting == userData.username && offer.rating == 0){ %>
+                                                        <form action = "/write_review" method = "GET">
+                                                            <input type="hidden" id="offerid" name="keyword" value="<%= offer._id %>">
+                                                            <button type="submit">Add review</button>
+                                                        </form>
+                                                    <% } %>
+                                                    <form action="/new_chat" method = "POST">
+                                                        <input type="hidden" id="username" name="username" value="<%= userData.username %>">
+                                                        <% if(offer.person_accepting == userData.username){ %>
+                                                            <input type="hidden" id="chat_receiver" name="chat_receiver" value="<%= offer.person_offering %>">
+                                                        <% } else { %>
+                                                            <input type="hidden" id="chat_receiver" name="chat_receiver" value="<%= offer.person_accepting %>">
+                                                        <% } %> 
+                                                        <button id="Open_chat" type="submit">Open Chat</button>
+                                                    </form>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    <% } %>  
+                                <%})%>
+
+                                <% if (!hasActiveJobs) { %>
+                                    You have no active jobs.
+                                <% } %>
+
+                            <% } else { %>
+                                You have no active jobs.
+                            <% } %>
+                        </ul>
+                    </div>
+                    
+                    <!-- Messages -->
+                    <div class="card bg-light">
+                        <h2 class="text-md">Messages</h2>
+                        <ul>
+                            <% if (convos.length != 0) { %>
+                                <% convos.forEach(function(convo){%>
+                                    <form action = "/chat" method = "GET">
+                                        <input type="hidden" name="keyword" value="<%= convo._id %>">
+                                        <% if(convo.person1 == userData.username){ %>
+                                            <button type="submit"><%= convo.person2 %></button>
+                                        <% } else { %>
+                                            <button type="submit"><%= convo.person1 %></button>
+                                        <% } %> 
+                                    </form>
+                                <%})%>
+                            <% } else { %>
+                                You have not received any messages.
+                            <% } %>
+
+                            <form action = "/chat" method = "GET">
+                                <input type="hidden" name="keyword" value="No_convo">
+                                <button class="btn" type="submit">New Chat</button>
+                            </form>
+                        </ul>
+                    </div>
+                    
+                    <!-- Active Listings -->
+                    <div class="card bg-light">
+                        <h2 class="text-md">Active Listings</h2>
+                        <div class="active-listings-grid">
+                            <% if (offers.length != 0) { %>
+                                <% let hasActiveListings = false; %>
+
+                                <% offers.forEach(function(offer){%>
+                                    <% if(offer.person_accepting == "None"){ %>
+                                        <% hasActiveListings = true; %>
+
+                                        <div class="active-listings">
+                                            <a href="/offer-page?keyword=<%= encodeURIComponent(offer._id) %>">
+                                                <div>
+                                                    <span><%= offer.title %></span>
+                                                    <ul>
+                                                        <% var formattedLocation1 = parseFloat(offer.location[0]).toFixed(2); %>
+                                                        <% var formattedLocation2 = parseFloat(offer.location[1]).toFixed(2); %>
+                                                        <li><i class="fa-solid fa-location-dot"></i> <%= formattedLocation1 %>,<%= formattedLocation2 %></li>
+                                                        <li><i class="fa-solid fa-sterling-sign"></i> <%= offer.price %></li>
+                                                    </ul>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    <% } %>  
+                                <%})%>
+
+                                <% if (!hasActiveListings) { %>
+                                    You have no active listings.
+                                <% } %>
+
+                            <% } else { %>
+                                You have no active listings.
+                            <% } %>
+
+                        </div>
+                        <a href="/new-listing" class="btn" type="submit">Create New Listing</a>
+
+                    </div>
+                    
+                    <!-- Reviews -->
+                    <div class="card bg-light">
+                        <h2 class="text-md">Reviews</h2>
+                        <ul>
+                            <% if (reviews.length != 0) { %>
+                                <% reviews.forEach(function(review){%>
+                                    <li>
+                                        <div>
+                                            <span><b><%= review.title %></b></span> 
+                                            <div class="stars">
+                                                <% for (let i = 1; i <= review.rating; i++) { %>
+                                                    <span class="star active">&#9733;</span>
+                                                <% } %>
+                                            </div>
+                                            <p class="excerpt"><%= review.message %></p>
+                                        </div>
+                                    </li>
+                                <%})%>
+                            <% } else { %>
+                                You have not received any reviews yet.
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <!-- Earnings -->
+                    <div class="card bg-light earnings">
+                        <h2 class="text-md">Earnings</h2>
+                        <p class="text-lg">£<%= earnings %></p>
+                        <p>This Month</p>
+                    </div>
+                </div>
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+
+        <!-- Leaflet -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+        <script>
+            //Get latitude and longitude from input fields
+            let currentLat = document.getElementById('lat').value;
+            let currentLng = document.getElementById('lng').value;
+            //Create the map using leaflet and add a marker at the selected location
+            var map = L.map('mapid').setView([currentLat, currentLng], 13);
+            let marker = L.marker([currentLat, currentLng]).addTo(map);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+            }).addTo(map);
+
+            function onMapClick(e) {
+                //When a new location is clicked thestored latitude and longitude must be changed
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                // Update form values
+                document.getElementById('lat').value = lat;
+                document.getElementById('lng').value = lng;
+
+                // Marker must be moved to reflect the new location
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+            }
+
+            map.on('click', onMapClick);
+        </script>
+    </body>
+</html>

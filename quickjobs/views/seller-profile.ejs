@@ -1,0 +1,152 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Breadcrumbs -->
+         <%- include('./partials/breadcrumbs.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Seller Profile -->
+         <section class="seller-profile">
+            <div class="container container-lg">
+                <div class="seller-profile-details">
+                    <!-- Seller Profile -->
+                    <div class="card bg-light seller-profile">
+                        <p><span>Name:</span> <%= userData.name %></p>
+
+                        <% var formattedLocation1 = parseFloat(userData.location[0]).toFixed(2); %>
+                        <% var formattedLocation2 = parseFloat(userData.location[1]).toFixed(2); %>
+                        <p><span>Location:</span> <%= formattedLocation1 %>,<%= formattedLocation2 %></p>
+
+                        <p><span>User Rating:</span>
+                            <% if (userData.user_rating) { %>
+                                <div class="stars user_stars">
+                                    <% for (let i = 1; i <= user_rating; i++) { %>
+                                        <span class="star active">&#9733;</span>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <%= userData.name %> has not received any ratings yet.
+                            <% } %> 
+                        </p>
+
+                        <ul class="social-media-profiles">
+                            <% if (userData.facebook) { %>
+                             <li><a href="<%= userData.facebook %>"><i class="fab fa-facebook"></i></a></li>
+                            <% } %>
+                            <% if (userData.instagram) { %>
+                             <li><a href="<%= userData.instagram %>"><i class="fab fa-instagram"></i></a></li>
+                            <% } %>
+                            <% if (userData.tiktok) { %>
+                             <li><a href="<%= userData.tiktok %>"><i class="fab fa-tiktok"></i></a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <!-- Qualifications -->
+                    <div class="card bg-light qualifications">
+                        <h2 class="text-md">Qualifications</h2>
+                        <% if (userData.qualifications) { %>
+                            <%= userData.qualifications %>
+                        <% } else { %>
+                            <%= userData.name %> has not entered any qualifications yet.
+                        <% } %> 
+                    </div>
+                </div>
+
+                <!-- Offers -->
+                <div id="offers" class="card bg-light">
+                    <h2 class="text-md">Offers</h2>
+
+                    <div class="offers">
+                        <% if (offers.length != 0) { %>
+                            <% let hasCreatedOffers = false; %>
+
+                            <% offers.forEach(function(offer){%>
+                                <% if(offer.person_accepting == "None"){ %>
+                                    <% hasCreatedOffers = true; %>
+                                    <div class="card bg-light">
+                                        <a href="/offer-page?keyword=<%= encodeURIComponent(offer._id) %>">
+                                            <h3 class="text-md"><%= offer.title %></h3>
+                                            <p><%= offer.description %></p>
+                                        </a>
+                                    </div>
+                                <% } %>
+                            <%})%>
+
+                            <% if (!hasCreatedOffers) { %>
+                                <%= userData.name %> has not created any offers yet.
+                            <% } %>
+
+                        <% } else { %>
+                            <%= userData.name %> has not created any offers yet.
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Jobs Completed -->
+                <div id="jobs-completed" class="card bg-light">
+                    <h2 class="text-md">Jobs completed</h2>
+
+                    <div class="jobs-completed">
+                        <% if (offers.length != 0) { %>
+                            <% let hasCompletedJobs = false; %>
+
+                            <% offers.forEach(function(offer){%>
+                                <% if(offer.person_accepting != "None"){ %>
+                                    <% hasCompletedJobs = true; %>
+                                    <div class="card bg-light">
+                                        <a href="/offer-page?keyword=<%= encodeURIComponent(offer._id) %>">
+                                            <h3 class="text-md"><%= offer.title %></h3>
+                                            <p><%= offer.description %></p>
+                                        </a>
+                                    </div>
+                                <% } %>  
+                            <%})%>
+
+                            <% if (!hasCompletedJobs) { %>
+                                <%= userData.name %> has not completed any jobs yet.
+                            <% } %>
+
+                        <% } else { %>
+                            <%= userData.name %> has not completed any jobs yet.
+                        <% } %>
+                    </div>
+                </div>
+                    
+                <!-- Reviews -->
+                <div class="card bg-light">
+                    <h2 class="text-md">Reviews</h2>
+                    <ul>
+                        <% if (reviews.length != 0) { %>
+                            <% reviews.forEach(function(review){%>
+                                <li>
+                                    <div>
+                                        <span><b><%= review.title %></b></span> 
+                                        <div class="stars">
+                                            <% for (let i = 1; i <= review.rating; i++) { %>
+                                                <span class="star active">&#9733;</span>
+                                            <% } %>
+                                        </div>
+                                        <p class="excerpt"><%= review.message %></p>
+                                    </div>
+                                </li>
+                            <%})%>
+                        <% } else { %>
+                            <%= userData.name %> has not received any reviews yet.
+                        <% } %>
+                    </ul>
+                </div>       
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+    </body>
+</html>

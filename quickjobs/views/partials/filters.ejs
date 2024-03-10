@@ -1,0 +1,71 @@
+<section class="filters bg-light">
+    <div class="container container-lg">
+        <div class="filters-menu">
+            <span>Filter by:</span>
+            <form id="filters_list" action="/offers" method = "POST">
+                <div id="category-filter" class="filter">
+                    <p>Category <i class="fa-solid fa-caret-down"></i></p>
+                    <select name="categories" class="dropdown">
+                        <option value="">-</option>
+                        <% categories.forEach(function(category){%>
+                            <option value="<%= category %>"><%= category %></option>
+                        <%})%>
+                    </select>
+                </div>
+
+                <div id="location-filter" class="filter">
+                    <p>Location <i class="fa-solid fa-caret-down"></i></p>
+                    <select name="location" class="dropdown">
+                        <option value="0">-</option>
+                        <option value="25">Within 25km</option>
+                        <option value="50">Within 50km</option>
+                        <option value="100">Within 100km</option>
+                    </select>
+                </div>
+
+                <div id="availability-filter" class="filter">
+                    <p>Availability <i class="fa-solid fa-caret-down"></i></a>
+                    <select name="availability" class="dropdown">
+                        <option value="">-</option>
+                        <option value="1">Within 24h</option>
+                        <option value="7">This Week</option>
+                        <option value="30">This Month</option>
+                    </select>
+                </div>
+
+                <div id="price-filter" class="filter">
+                    <p>Price <i class="fa-solid fa-caret-down"></i></p>
+                    <div class="dropdown">
+                        <p>What is your budget for this job?</p>
+                        <label for="max-price">£</label>
+                        <input type="number" name="max_price" id="max-price" placeholder="No_value", value="0">
+                    </div>
+                </div>
+                
+                <div id="rating-filter" class="filter">
+                    <p>Rating <i class="fa-solid fa-caret-down"></i></p>
+                    <select name="rating" class="dropdown">
+                        <option value="0">-</option>
+                        <option value="4">4 and up</option>
+                        <option value="3">3 and up</option>
+                        <option value="2">2 and up</option>
+                        <option value="1">1 and up</option>
+                    </select>
+                </div>
+                <div id="sort-by">
+                    <p><span>Sort by </span><i class="fa-solid fa-caret-down"></i></a>
+                    <select name="sorting" class="dropdown">
+                        <option value="">-</option>
+                        <option value="Availability">Availability (Soonest first)</option>
+                        <option value="Price">Price (Lowest first)</option>
+                        <option value="Rating">User Rating (Highest first)</option>
+                        <option value="Location">Location (Closest first)</option>
+                    </select>
+                </div>
+                <button class="offer_card" type="submit">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+

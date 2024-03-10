@@ -1,0 +1,84 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+         
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+         
+         <!-- Filters -->
+         <%- include('./partials/filters.ejs') %>
+         
+         <!-- Offers -->
+         <section class="offers">
+            <div class="container container-lg">
+                <!-- Offers -->
+                <div class="offers-grid" id="offersGrid">
+                    <% var itemsPerPage = 6; %>
+                    <% var totalOffers = offers.length; %>
+                    <input type="hidden" id="totalOffers" value="<%= totalOffers %>">
+                    <% var totalPages = Math.ceil(totalOffers / itemsPerPage); %>
+                    <% var currentPage = 1; %>
+                    <% var startIndex = 0; %>
+                    <% var endIndex = itemsPerPage; %>
+
+                    <% offers.forEach(function(offer, index) { %>
+                        <div class="offer_card offer-item bg-light" data-index="<%= index + 1 %>">
+                            <form action="/offer-page" method="GET">
+                                <input type="hidden" name="keyword" value="<%= offer._id %>">
+                                <button class="offer_card_button" type="submit">
+                                    <h2 class="text-md"><%= offer.title %></h2>
+                                    <p class="wrap"><%= offer.description %></p> 
+                                    <p>...See Offer</p>
+                                </button>
+                            </form>
+                        </div>
+                    <% }) %>
+                </div>
+        
+                <!-- Pagination -->
+                <div class="pagination-list" id="paginationList" data-total-pages="<%= totalPages %>">
+                    <% for (var i = 1; i <= totalPages; i++) { %>
+                        <span class="pagination-item" data-page="<%= i %>"><%= i %></span>
+                    <% } %>                
+                </div>
+            </div>
+        </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                //Code controlling pagination
+                function showOffersForPage(page) {
+                    //The offers displayed will be those from (page_number-1)*6 to page_number*6
+                    var itemsPerPage = 6;
+                    var totalOffers = parseInt($("#totalOffers").val());
+                    var totalPages = Math.ceil(totalOffers / itemsPerPage);
+                    var startIndex = (page - 1) * itemsPerPage;
+                    var endIndex = page === totalPages ? totalOffers : startIndex + itemsPerPage;
+
+                    // Hide all offers
+                    $(".offer-item").hide();
+
+                    // Show offers for the selected page
+                    $(".offer-item").slice(startIndex, endIndex).show();
+                }
+
+                showOffersForPage(1);
+
+                // Change page number when clicking a pagination number
+                $(".pagination-item").on("click", function() {
+                    var page = parseInt($(this).attr("data-page"));
+                    showOffersForPage(page);
+                });
+            });
+        </script>
+    </body>
+</html>

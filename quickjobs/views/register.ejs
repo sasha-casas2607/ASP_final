@@ -1,0 +1,95 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Login -->
+         <section class="register">
+            <div class="container container-sm">
+                <div class="card bg-light register-form">
+                    <form action="registerred" method="POST" onsubmit="return checkPassword()">
+                        <h2 class="text-md text-center">Your Login Details</h2>
+                        <p class="text-center">Please choose a unique password that contains at least one special character, one capital letter, and is at least 10 characters long.</p>
+                        <input type="email" id="email" name="user" placeholder="Email" required>
+                        <input type="password" id="password" name="pass" placeholder="Password" required>
+
+                        <h2 class="text-md text-center">About You</h2>
+                        <p class="text-center">This information will show up on your profile and will let other users get to know you a bit.</p>
+                        <input type="name" id="name" name="name" placeholder="Your Name" required>
+                        <textarea id="description" name="description" placeholder="Write a short introduction about yourself" required></textarea>
+
+                        <div class="card bg-light location">
+                            <h2 class="text-md text-center">Your Location</h2>
+                            <p class="text-center">Simply click on the map to set your approximate location. This will allow us to find offers and sellers near you.</p>
+                            <ul>
+                                <li><input type="text" id="lat" name="lat" placeholder="Latitude" value="51.4742772" required></li>
+                                <li><input type="text" id="lng" name="lng" placeholder="Longitude" value="-0.035417" required></li>
+                            </ul>
+                            <div id="mapid"></div>
+                        </div>
+
+                        <button type="submit" class="btn" value="Register">Create Account</button>
+                    </form>
+                </div>
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+
+        <script>
+            //Password should be secure by satisfying some conditions
+            function checkPassword() {
+                var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+                password = document.getElementById('password').value;
+                if (password.length < 10) {
+                    alert("Password must be at least 10 characters");
+                    return false;
+                } else if (!format.test(password)) {
+                    alert("Password must contain at least one special character");
+                    return false;
+                } else if (!/[A-Z]/.test(password)) {
+                    alert("Password must contain a capital letter");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        </script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script>
+            //Map code commented in the seller dashboard page
+            var map = L.map('mapid').setView([51.4742772,-0.035417], 13);
+            let marker = L.marker([51.4742772,-0.035417]).addTo(map);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+            }).addTo(map);
+
+            function onMapClick(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                // Update form values
+                document.getElementById('lat').value = lat;
+                document.getElementById('lng').value = lng;
+
+                // Add or move marker
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+            }
+
+            map.on('click', onMapClick);
+        </script>
+    </body>
+</html>

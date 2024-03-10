@@ -1,0 +1,28 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Login -->
+         <section class="login">
+            <div class="container container-sm">
+                <div class="card bg-light login-form">
+                    <form action="loggedin" method="POST">
+                        <input type="email" id="email" name="user" placeholder="Email" required>
+                        <input type="password" id="password" name="pass" placeholder="Password" required>
+                        <button type="submit" class="btn" value="Login">Sign in</button>
+                    </form>
+                </div>
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+    </body>
+</html>

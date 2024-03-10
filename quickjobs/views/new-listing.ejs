@@ -1,0 +1,139 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Breadcrumbs -->
+         <%- include('./partials/breadcrumbs.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- New Listing -->
+         <section class="new-listing">
+            <div class="container container-lg">
+                <div class="card bg-light new-listing-grid">
+                    <form id="new_offer_form" action="/new_offer" method="POST" enctype="multipart/form-data">
+                        <!-- Offer Details -->
+                        <div class="card bg-light offer-details">
+                            <h2 class="text-md">What Are You Offering?</h2>
+                            <input type="text" id="title" name="title" placeholder="Title" required><input type="text" id="price" name="price" placeholder="Price" required>
+                            <textarea id="description" name="description" placeholder="Description" required></textarea>
+
+                            <div class="category">
+                                <h2 class="text-md">Select a Category</h2>
+                                <select name="categories" class="dropdown">
+                                    <% categories.forEach(function(category){%>
+                                        <option value="<%= category %>"><%= category %></option>
+                                    <%})%>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <input type="text" id="other_cat" name="other_cat" placeholder="Other">
+                            </div>
+
+                            <button type="submit" class="btn">Create Listing</button>
+                        </div>
+                        
+                        <div class="card bg-light availability">
+                            <!-- Image Upload -->
+                            <h2 class="text-md">Upload an Image</h2>
+                            <input type="file" name="image" id="image">
+
+                            <!-- Availability -->
+                            <h2 class="text-md">Select Dates</h2>
+                            <input type="text" id="selectedDates" name="selectedDates" style="display: none;" />
+                            <div id="calendar"></div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="card bg-light location">
+                            <h2 class="text-md">Select Location</h2>
+                            <ul>
+                                <li><input type="text" id="lat" name="lat" placeholder="Latitude" value="<%= userData.location[0] %>"></li>
+                                <li><input type="text" id="lng" name="lng" placeholder="Longitude" value="<%= userData.location[1] %>"></li>
+                            </ul>
+                            <div id="mapid"></div>
+                        </div>
+                    </form>
+               </div>
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script>
+            let currentLat = document.getElementById('lat').value;
+            let currentLng = document.getElementById('lng').value;
+
+            var map = L.map('mapid').setView([currentLat, currentLng], 13);
+            let marker = L.marker([currentLat, currentLng]).addTo(map);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+            }).addTo(map);
+
+            function onMapClick(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                // Update form values
+                document.getElementById('lat').value = lat;
+                document.getElementById('lng').value = lng;
+
+                // Add or move marker
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+            }
+
+            map.on('click', onMapClick);
+        </script>
+
+        <script>
+            const selectedDatesInput = document.getElementById('selectedDates');
+            let selectedDates = [];
+
+            // Function to update the hidden input with selected dates
+            function updateSelectedDatesInput() {
+                selectedDatesInput.value = selectedDates.join(',');
+            }
+
+            $(document).ready(function () {
+                $('#calendar').datepicker({
+                    beforeShowDay: function (date) {
+                        // Check if the date is in the array of selected dates
+                        const dateString = $.datepicker.formatDate('yy-mm-dd', date);
+                        if (selectedDates.indexOf(dateString) !== -1) {
+                            return [true, 'selected-date'];
+                        }
+                        return [true, ''];
+                    },
+                    onSelect: function (date) {
+                        // Toggle selection
+                        const dateString = $.datepicker.formatDate('yy-mm-dd', new Date(date));
+                        const index = selectedDates.indexOf(dateString);
+                        if (index !== -1) {
+                            selectedDates.splice(index, 1);
+                        } else {
+                            selectedDates.push(dateString);
+                        }
+                        updateSelectedDatesInput();
+                        $('#calendar').datepicker('refresh'); // Refresh the calendar to update the view
+                    }
+                });
+            });
+        </script>
+
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    </body>
+</html>

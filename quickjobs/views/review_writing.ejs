@@ -1,0 +1,57 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Login -->
+         <section class="write_review">
+            <div class="container container-sm">
+                <div class="card bg-light login-form">
+                    <form action="/review_submitted" method="POST">
+                        <input type="hidden" id="offerid" name="offerid" value="<%= offer._id %>">
+                        <input type="hidden" id="offerer" name="offerer" value="<%= offer.person_offering %>">
+                        <input type="hidden" id="accepter" name="accepter" value="<%= offer.person_accepting %>">
+                        <p><b>Title</b></p>
+                        <input type="text" id="title" name="title" placeholder="Title">
+                        <p><b>Rating</b></p>
+                        <div class="stars">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                              <span class="star" data-rating="<%= i %>" onclick="setRating(this, '<%= i %>')">&#9733;</span>
+                            <% } %>
+                            <input type="hidden" id="rating" name="rating" value="">
+                        </div>
+                        <p><b>Review text</b></p>
+                        <textarea id="review_text" type="text" name="text" placeholder="Type your review..."></textarea>
+                        <button type="submit" class="btn" value="Login">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+        <script>
+            //Code to change the color of the stars to reflect specified rating
+            function setRating(element, rating) {
+                const ratingInput = document.getElementById('rating');
+                ratingInput.value = rating;
+
+                const stars = document.querySelectorAll('.star');
+                //No start is marked for now
+                stars.forEach(star => star.classList.remove('active'));
+                //All stars from the first to the clicked star should change colour
+                for (let i = 0; i < stars.length; i++) {
+                    if (parseInt(stars[i].getAttribute('data-rating')) <= rating) {
+                    stars[i].classList.add('active');
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,135 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+        <!-- Nav -->
+        <%- include('./partials/nav.ejs') %>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container container-lg">
+                <div class="hero-content">
+                    <div class="hero-title">
+                        <h1 class="hero-heading text-xxl">Welcome to QuickJobs!</h1>
+                        <p class="hero-text">If you have a task that needs to be done, but you can't do it yourself, finding help has never been easier. 
+                            Enter the task in the box below and press search to begin!</p>
+                        </div>
+                        <div class="search">
+                        <form action="/find_user" method="GET">
+                            <input type="text" id="search" name="keyword" placeholder="Who do you want to find?">
+                            <button class="btn" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tutorials -->
+        <section class="tutorials">
+            <div class="container container-sm">
+                <h2 class="tutorials-heading text-xl text-center">How to Get Started</h2>
+                <p class="tutorials-subheading text-md text-center">See to steps below and find out how to join the QuickJobs Network</p>
+
+                <div class="tutorials-grid">
+                    <!-- How to hire someone -->
+                    <div class="card bg-light">
+                        <div class="tutorials-card-header">
+                            <h3 class="tutorials-card-heading text-lg">How to hire someone</h3>
+                            <p class="tutorials-card-subheading">If you have a task you can't do yourself and want to find someone to do it for you, 
+                                follow the simple steps below to get started
+                            </p>
+                        </div>
+                        <div class="tutorials-card-body">
+                            <ol>
+                                <li>Click the "Get Started" button below to create an account, and sign in</li>
+                                <li>Post your requirements with a title and a simple description</li>
+                                <li>Look at the bids you receive and choose a QuickJobber to complete the task</li>
+                            </ol>
+                            <a href="/register" class="btn">Get Started</a>
+                        </div>
+                    </div>
+
+                    <!-- How to offer your services -->
+                    <div class="card bg-light">
+                        <div class="tutorials-card-header">
+                            <h3 class="tutorials-card-heading text-lg">How to get hired</h3>
+                            <p class="tutorials-card-subheading">If you have skills or knowledge you can offer, and you have some free time,
+                                follow the steps below to become a QuickJobber
+                            </p>
+                        </div>
+                        <div class="tutorials-card-body">
+                            <ol>
+                                <li>Click the "Get Started" button below to create an account, and sign in</li>
+                                <li>Fully set up your account so other people can feel safe hiring you</li>
+                                <li>Look at the offers page, and when you find one that you want to do, make a bid</li>
+                            </ol>
+                            <a href="/seller-dashboard" class="btn">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQs -->
+        <section class="faq">
+            <div class="container container-sm">
+                <h3 class="text-xl text-center">Frequently Asked Questions</h3>
+
+                <div class="faq-content">
+                    <div class="faq-group">
+                        <div class="faq-group-header">
+                            <h4 class="text-md">What kind of jobs can be posted on QuickJobs</h4>
+                        </div>
+                        <div class="faq-group-body">
+                            <p>As long as a job is within the guidleines, you can post anything you want. No job is too obscure. Depending on the 
+                                skill-set required, you might get less bids on certain jobs, but you can still post them and try your luck. 
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-group">
+                        <div class="faq-group-header">
+                            <h4 class="text-md">How are payments processed once a job is complete?</h4>
+                        </div>
+                        <div class="faq-group-body">
+                            <p>Currently, QuickJobs does not offer an online payment service. For this reason, payments are made in-person once the job 
+                                is completed. Payments must be within the range that was pre-agreed between both parties.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-group">
+                        <div class="faq-group-header">
+                            <h4 class="text-md">Is this service safe?</h4>
+                        </div>
+                        <div class="faq-group-body">
+                            <p>We make it a priority to make this service as safe as possible. Whilst we cannot physically be there while a job is being carried out,
+                                we do ask all our QuickJobbers to upload identification documents which we keep a record off, to maintain a sense of accountability. 
+                            </p>
+                            <p>Every QuickJobber will have a personal profile where they can upload information about themselves, so you can get an idea of who you are hiring.
+                                There is also a review system in place where a rating can be given once a job is completed. This way, our users can know how reliable a QuickJobber
+                                is, and make sure they will be satisfied with the service given.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-group">
+                        <div class="faq-group-header">
+                            <h4 class="text-md">If I want to become a QuickJobber, what skills or experience do I need to have?</h4>
+                        </div>
+                        <div class="faq-group-body">
+                            <p>Here at QuickJobs, we believe that everyone has something to offer. It might be DIY, cleaning, language skills, and many more.
+                                Even if you don't think you have a skill to offer, feel free to make an account and browse the offers page. We believe that you 
+                                might have more to offer than you think!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+    </body>
+</html>

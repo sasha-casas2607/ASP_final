@@ -1,0 +1,110 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Breadcrumbs -->
+         <%- include('./partials/breadcrumbs.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Chat Page -->
+         <body>
+            <div class="chat-container">
+                <!-- Open Chats Section -->
+                <div class="open-chats">
+                    <!-- List of open chats -->
+                    <form action="/new_chat" method = "POST">
+                        <input type="hidden" id="username" name="username" value="<%= username %>">
+                        <input id="chat_receiver" name="chat_receiver" placeholder="Enter name of person you want to chat with">
+                        <button id="new_chat" type="submit">New Chat</button>
+                    </form>
+                    <ul>
+                        <!-- Each chat has a form so the user can move between chats -->
+                        <% convos.forEach(function(convo){%>
+                            <div class="user-chat">
+                                <form action="/change_chat" method = "POST">
+                                    <input type="hidden", id="convo_id" name="convo_id" value="<%= convo._id %>">
+                                    <% if(convo.person1 == username){ %>
+                                        <button type="submit">
+                                            <!-- For each chat show name of other person and latest message -->
+                                            <h3><%= convo.person2 %></h3>
+                                            <% if (messages.length > 0) { %>
+                                                <p><%= messages[0].message %></p>
+                                            <% } else { %>
+                                                <p></p> 
+                                            <% } %>
+                                        </button>
+                                    <% } else { %>
+                                        <button type="submit">
+                                            <h3><%= convo.person1 %></h3>
+                                            <% if (messages.length > 0) { %>
+                                                <p><%= messages[0].message %></p>
+                                            <% } else { %>
+                                                <p></p> 
+                                            <% } %>
+                                        </button>
+                                    <% } %>  
+                                </form>
+
+                            </div>
+                        <%})%>
+                    </ul>
+                </div>
+        
+                <!-- Chat Window Section -->
+                <div class="chat-window">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <% if(currentconvo != 0){ %>
+                            <% if(currentconvo.person1 == username){ %>
+                                <h2>Chat with "<%= currentconvo.person2 %>"</h2>
+                            <% } else { %>
+                                <h2>Chat with "<%= currentconvo.person1 %>"</h2>
+                            <% } %>  
+                        <% } else { %>
+                            <h2>Start a conversation with someone to send messages</h2>
+                        <% } %>    
+                    </div>
+        
+                    <!-- Chat Messages -->
+                    <div class="chat-messages">
+                        <% if(messages != 0){ %>
+                            <!-- Display all messages -->
+                            <% messages.forEach(function(message){%>
+                                <!-- Who sent the message determines in which side of the screen it is displayed -->
+                                <% if(message.person_sent == username){ %>
+                                    <div class="message-sent">
+                                        <p><%= message.message %></p>
+                                    </div>
+                                <% } else { %>
+                                    <div class="message-received">
+                                        <p><%= message.message %></p>
+                                    </div>
+                                <% } %>    
+                            <%})%>
+                        <% } %>
+                    </div>
+        
+                    <!-- Message Input Bar -->
+                    <div class="message-input">
+                        <% if(currentconvo != 0){ %>
+                            <!-- Use a form so sender can submit a message -->
+                            <form action="/message_sent" method = "POST">
+                                <input type="hidden", id="convo_id" name="convo_id" value="<%= currentconvo._id %>">
+                                <textarea id="message" type="text" name="message" placeholder="Type your message..."></textarea>
+                                <button class="btn" type="submit">Send</button>
+                            </form>
+                        <% } %>   
+                    </div>
+                </div>
+            </div>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+    </body>
+</html>

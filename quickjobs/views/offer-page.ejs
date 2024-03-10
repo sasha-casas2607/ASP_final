@@ -1,0 +1,198 @@
+<html lang="en">
+    <!-- Head -->
+    <%- include('./partials/head.ejs') %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <body>
+         <!-- Nav -->
+         <%- include('./partials/nav.ejs') %>
+
+         <!-- Breadcrumbs -->
+         <%- include('./partials/breadcrumbs.ejs') %>
+
+         <!-- Heading -->
+         <%- include('./partials/heading.ejs') %>
+
+         <!-- Offer Page -->
+         <section class="offer-page">
+            <div class="container container-lg">
+                <div class="offer-page-grid">
+                    <!-- Description -->
+                    <div class="card bg-light description">
+                        <h2 class="text-md">Description</h2>
+                        <p><%= offer_data.description %></p>
+                    </div>
+
+                    <!-- Seller Profile -->
+                    <div class="card bg-light seller-profile">
+                        <img src="./uploads/<%= offer_data.image %>" alt="<%= offer_data.title %>">
+                        <p><span>Price:</span> £<%= offer_data.price %></p>
+                        <p><span>Category:</span> <%= offer_data.category %></p>
+                        <p><span>User Rating:</span>
+                            <% if (user_rating) { %>
+                                <div class="stars user_stars">
+                                    <% for (let i = 1; i <= Math.round(user_rating); i++) { %>
+                                        <span class="star active">&#9733;</span>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                This user has not received any ratings yet.
+                            <% } %> 
+                        </p>
+                        <form action = "/CTA" method="POST">
+                            <input type="hidden" name="id" value="<%= offer_data._id %>">
+                            <button class="btn" type="submit">CTA </button>
+                        </form>
+                        <div class="btn"><a href="/chat?keyword=No_convo">Contact</a></div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="card bg-light reviews">
+                        <h2 class="text-md">Other User Reviews</h2>
+                        <ul>
+                            <% if (reviews.length != 0) { %>
+                                <% reviews.forEach(function(review){%>
+                                    <li>
+                                        <div>
+                                            <span><%= review.title %></span> 
+                                            <div class="stars">
+                                                <% for (let i = 1; i <= review.rating; i++) { %>
+                                                    <span class="star active">&#9733;</span>
+                                                <% } %>
+                                            </div>
+                                            <p class="excerpt"><%= review.message %></p>
+                                        </div>
+                                    </li>
+                                <%})%>
+                            <% } else { %>
+                                This user has not received any reviews yet.
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <!-- Comments -->
+                    <div class="card bg-light comments">
+                        <h2 class="text-md">Ask a Question</h2>
+                        <ul>
+                            <% if (comments.length != 0) { %>
+                                <% comments.forEach(function(comment){%>
+                                    <li>
+                                        <div class="comments">
+                                            <span><%= comment.username %></span>
+                                            <p><%= comment.comment %></p>
+                                        </div>
+                                    </li>
+                                <%})%>
+                            <% } else { %>
+                                Nobody has left a comment yet.
+                            <% } %>
+                        </ul>
+
+                        <form action="/add_comment" method = "POST">
+                            <input type="hidden" id="username" name="username" value="<%= username %>">
+                            <input type="hidden" id="offerid" name="offerid" value="<%= offer_data._id %>">
+                            <textarea id="comment" type="text" name="comment" placeholder="Type your comment..."></textarea>
+                            <button type="submit">Submit</button>
+                        </form>
+                        
+                    </div>
+                    <div class="card bg-light availability">
+                        <div id="selectedDates" style="display: none;">
+                            <% offer_data.availability.forEach(function(date) { %>
+                                <input type="hidden" class="marked-date" name="markedDates[]" value="<%= date %>" />
+                            <% }); %>
+                        </div>
+                        <h2 class="text-md">Select Dates</h2>
+                        <input type="text" id="selectedDates" name="selectedDates" style="display: none;" />
+                        <div id="calendar"></div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="card bg-light location">
+                        <h2 class="text-md">Select Location</h2>
+                        <input type="hidden" name="lat" id="lat" value="<%= offer_data.location[0] %>" required><br>
+                        <input type="hidden" name="lng" id="lng" value="<%= offer_data.location[1] %>" required><br>
+                        <div id="mapid"></div>
+                    </div>
+                </div>
+
+            </div>
+         </section>
+
+         <!-- Footer -->
+        <%- include('./partials/footer.ejs') %>
+
+        <!-- Include Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+        <!-- Include Leaflet JavaScript -->
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+        <!-- JavaScript for the map -->
+        <script>
+            var latitude = document.getElementById('lat').value;
+            var longitude = document.getElementById('lng').value;
+            var fixedLatLng = [parseFloat(latitude), parseFloat(longitude)];
+
+            var map = L.map('mapid').setView(fixedLatLng, 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+            }).addTo(map);
+
+            var marker = L.marker(fixedLatLng).addTo(map);
+
+            map.dragging.disable(); // Disable map dragging
+            map.touchZoom.disable(); // Disable touch zoom
+            map.doubleClickZoom.disable(); // Disable double click zoom
+            map.scrollWheelZoom.disable(); // Disable scroll wheel zoom
+            map.boxZoom.disable(); // Disable box zoom
+            map.keyboard.disable(); // Disable keyboard navigation
+
+            function onMapClick(e) {
+                // Do nothing on map click since map is fixed
+            }
+
+            map.on('click', onMapClick);
+        </script>
+        
+        <script>
+            const markedDates = []; // Array to store marked dates
+        
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        
+            // Retrieve marked dates from hidden inputs
+            $('.marked-date').each(function() {
+                const originalDate = $(this).val();
+                const formattedDate = formatDate(originalDate);
+                markedDates.push(formattedDate);
+            });
+            // Initialize calendar with marked dates
+            $(document).ready(function () {
+                $('#calendar').datepicker({
+                    beforeShowDay: function (date) {
+                        const dateString = $.datepicker.formatDate('yy-mm-dd', date);
+                        // Check if the date is in the array of marked dates
+                        if (markedDates.indexOf(dateString) !== -1) {
+                            return [true, 'marked-date'];
+                        }
+                        return [false, ''];
+                    },
+                    onSelect: function (date) {
+                        // Prevent selection
+                        return false;
+                    }
+                });
+            });
+        </script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    </body>
+</html>

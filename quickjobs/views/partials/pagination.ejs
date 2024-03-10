@@ -1,0 +1,5 @@
+<div class="pagination-list">
+    <% for (var i = 1; i <= totalPages; i++) { %>
+        <a href="?page=<%= i %>" class="pagination-item <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>                
+</div>
